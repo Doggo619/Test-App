@@ -1,0 +1,44 @@
+{
+  "rooms": {
+    "roomId1": {
+      "player1": {
+        "name": "Player1",
+        "score": 0,
+        "words": {
+          "1": "word1",
+          "2": "word2"
+        }
+      },
+      "player2": {
+        "name": "Player2",
+        "score": 0,
+        "words": {
+          "1": "word3",
+          "2": "word4"
+        }
+      },
+      "lastWord": "initialWord"
+    },
+    "roomId2": {
+      "player1": {
+        "name": "Player1",
+        "score": 0,
+        "words": {
+          "1": "word1",
+          "2": "word2"
+        }
+      },
+      "player2": {
+        "name": "Player2",
+        "score": 0,
+        "words": {
+          "1": "word3",
+          "2": "word4"
+        }
+      },
+      "lastWord": "initialWord"
+    }
+  }
+}
+
+

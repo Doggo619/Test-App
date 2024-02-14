@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Test App</string>
+
+    <string name="alert_title_date_modified">Date</string>
+    <string name="alert_msg_date_modified">Your phone date is inaccurate! Adjust your clock and try again.</string>
+    <string name="action_make_date_time_proper">MAKE IT PROPER</string>
+
+
+    <string name="students_joined">%s Students Joined</string>
+</resources>

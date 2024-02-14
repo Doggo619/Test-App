@@ -1,0 +1,34 @@
+{
+  "quiz": {
+    "delta": {
+      "questions": [
+        {
+          "question1": "Who will win the ICC T20 WC 2024?",
+          "option1": "Windies",
+          "option2": "Australia",
+          "option3": "India",
+          "option4": "Sri Lanka"
+        },
+        {
+          "question2": "When was Chandrayaan-3 launched?",
+          "option1": "2021",
+          "option2": "2022",
+          "option3": "2020",
+          "option4": "2023"
+        }
+      ],
+      "students" : {
+        "student1": {
+          "answer1": "A",
+          "answer2": "B",
+          "timetaken": 2000
+        },
+        "student2": {
+          "answer1": "D",
+          "answer2": "C",
+          "timetaken": 4000
+        }
+      }
+    }
+  }
+}
