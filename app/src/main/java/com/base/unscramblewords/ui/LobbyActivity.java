@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.base.unscramblewords.R;
 import com.base.unscramblewords.databinding.ActivityLobbyBinding;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -27,18 +28,19 @@ public class LobbyActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
+
         String roomId = getIntent().getStringExtra("roomId");
         String participantId = getIntent().getStringExtra("participantId");
         String studentName = getIntent().getStringExtra("studentName");
         long participantsCount = getIntent().getLongExtra("participantsCount", 0);
 
-        assert roomId != null;
-        DocumentReference quizRef = db.collection("quiz").document(roomId);
+        CollectionReference quizRef = db.collection("quiz");
+
 
         assert participantId != null;
-        quizRef.collection("participants").document(participantId).set(createParticipantMap(studentName));
+        quizRef.document(roomId).collection("participants").document(participantId).set(createParticipantMap(studentName));
 
-        quizRef.collection("participants").addSnapshotListener((queryDocumentSnapshots, e) -> {
+        quizRef.document(roomId).collection("participants").addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (e != null) {
                 Log.w("Lobby Activity", "participants listen failed", e);
                 return;
@@ -50,7 +52,7 @@ public class LobbyActivity extends AppCompatActivity {
             }
         });
 
-        quizRef.addSnapshotListener((documentSnapshot, e) -> {
+        quizRef.document(roomId).addSnapshotListener((documentSnapshot, e) -> {
             if (e != null) {
                 Log.w("Lobby Activity", "active listen failed", e);
                 return;

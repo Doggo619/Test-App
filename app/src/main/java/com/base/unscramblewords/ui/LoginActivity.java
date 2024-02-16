@@ -19,7 +19,7 @@ import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
     ActivityLoginBinding binding;
-    private DocumentReference quizRef;
+    private CollectionReference quizRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,60 +30,46 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-        quizRef = db.collection("quiz").document();
+        quizRef = db.collection("quiz");
 
+        String roomId = "6699";
         binding.btnQuiz.setOnClickListener(v -> {
             String studentName = Objects.requireNonNull(binding.etPlayerName.getText()).toString().trim();
-            String roomId = Objects.requireNonNull(binding.etRoomID.getText()).toString().trim();
             joinOrCreateQuizRoom(studentName, roomId);
         });
 
     }
 
     private void joinOrCreateQuizRoom(String studentName, String roomId) {
-        CollectionReference currentQuizRef = quizRef.collection("rooms");
-        DocumentReference roomDocumentRef = currentQuizRef.document(roomId);
 
-        roomDocumentRef.collection("participants").get().addOnCompleteListener(task -> {
-           if (task.isSuccessful()) {
-               QuerySnapshot snapshot = task.getResult();
-               if (snapshot != null) {
-                   long participantsCount = snapshot.size();
-                   long MAX_PARTICIPANTS = 5000;
-                   if (participantsCount < MAX_PARTICIPANTS) {
-                       joinOrCreateQuizRoomCount(studentName, roomId, roomDocumentRef, participantsCount);
-                   } else {
-                       Toast.makeText(LoginActivity.this, "Room is full", Toast.LENGTH_SHORT).show();
-                   }
-               }
-           } else {
-               Log.d("Login Activity", "Error getting documents: ", task.getException());
-           }
+        DocumentReference roomDocumentRef = quizRef.document(roomId);
+
+        roomDocumentRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (task.getResult().exists()) {
+                    roomDocumentRef.collection("participants").get().addOnCompleteListener(participantsTask -> {
+                        if (participantsTask.isSuccessful()) {
+                            QuerySnapshot snapshot = participantsTask.getResult();
+                            if (snapshot != null) {
+                                long participantsCount = snapshot.size();
+                                joinRoomAsStudent(studentName, roomId, roomDocumentRef, participantsCount);
+                            } else {
+                                Log.d("Login Activity", "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(this, "Room doesn't exist", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 
-    private void joinOrCreateQuizRoomCount(String studentName, String roomId, DocumentReference currentQuizRef, long participantsCount) {
 
-        currentQuizRef.collection("rooms").document(roomId).get().addOnSuccessListener( documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                joinRoomAsStudent(studentName, roomId, currentQuizRef, participantsCount);
-            } else {
-                createRoomAsStudent(studentName, roomId, currentQuizRef, participantsCount);
-            }
-        }).addOnFailureListener(e -> Log.d("Login Activity", "onFailure: " + e.getMessage()));
-    }
-
-    private void createRoomAsStudent(String studentName, String roomId, DocumentReference  currentQuizRef, long participantsCount) {
-        String participantId = currentQuizRef.collection("rooms").document(roomId).collection("participants").document().getId();
-        currentQuizRef.collection("rooms").document(roomId).collection("participants").document(participantId).set(new Students(studentName));
-        currentQuizRef.collection("rooms").document(roomId).update("totalParticipants", participantsCount + 1);
-        startQuizActivity(studentName, roomId, participantId, participantsCount + 1);
-    }
-
-    private void joinRoomAsStudent(String studentName, String roomId, DocumentReference  currentQuizRef, long participantsCount) {
-        String participantId = currentQuizRef.collection("rooms").document(roomId).collection("participants").document().getId();
-        currentQuizRef.collection("rooms").document(roomId).collection("participants").document(participantId).set(new Students(studentName));
-        currentQuizRef.collection("rooms").document(roomId).update("totalParticipants", participantsCount + 1);
+    private void joinRoomAsStudent(String studentName, String roomId, DocumentReference roomDocumentRef, long participantsCount) {
+        String participantId = roomDocumentRef.collection("participants").document().getId();
+        roomDocumentRef.collection("participants").document(participantId).set(new Students(studentName));
+        roomDocumentRef.update("totalParticipants", participantsCount + 1);
         startQuizActivity(studentName, roomId, participantId, participantsCount + 1);
     }
 
