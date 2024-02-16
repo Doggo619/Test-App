@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -57,7 +58,7 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
             String timeTaken = binding.tvTimer.getText().toString();
             Log.d("quiz Activity", "Time Taken   " + timeTaken);
             countDownTimer.cancel();
-            saveResultsToDatabase(questionResults, timeTaken);
+            saveResultsToDatabase(questionResults, timeTaken, getIntent().getStringExtra("studentName"));
             Intent intent = new Intent(QuizActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -76,7 +77,7 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
             @Override
             public void onFinish() {
                 String timeTaken = binding.tvTimer.getText().toString();
-                saveResultsToDatabase(questionResults, timeTaken);
+                saveResultsToDatabase(questionResults, timeTaken, getIntent().getStringExtra("studentName"));
                 Toast.makeText(QuizActivity.this, "Time's up! Test submitted successfully", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(QuizActivity.this, LoginActivity.class);
                 startActivity(intent);
@@ -88,11 +89,11 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
     private void updateTimerText() {
         long minutes = TimeUnit.MILLISECONDS.toMinutes(timeLeftInMillis);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(timeLeftInMillis) - TimeUnit.MINUTES.toSeconds(minutes);
-        String timerText = String.format("%02d:%02d", minutes, seconds);
+        String timerText = String.format(Locale.US,"%02d:%02d", minutes, seconds);
         binding.tvTimer.setText(timerText);
     }
 
-    private void saveResultsToDatabase(Map<Integer, Boolean> questionResults, String timeTaken) {
+    private void saveResultsToDatabase(Map<Integer, Boolean> questionResults, String timeTaken, String studentName) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String participantPath = "quiz/" + roomId + "/participants/" + participantId;
 
@@ -103,6 +104,7 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
         }
 
         Map<String, Object> participantData = new HashMap<>();
+        participantData.put("studentName", studentName);
         participantData.put("results", convertedResults);
         participantData.put("timeTaken", timeTaken);
 
