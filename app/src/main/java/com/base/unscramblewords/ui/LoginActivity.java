@@ -1,5 +1,6 @@
 package com.base.unscramblewords.ui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -9,10 +10,13 @@ import android.widget.Toast;
 
 import com.base.unscramblewords.databinding.ActivityLoginBinding;
 import com.base.unscramblewords.fireStoreDatabase.Students;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Objects;
 
@@ -27,6 +31,15 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        FirebaseMessaging.getInstance().subscribeToTopic("test")
+                .addOnCompleteListener(task -> {
+                   if (task.isSuccessful()) {
+                       Log.d("LoginActivity", "Successfully subscribed to topic");
+                   } else {
+                       Log.e("LoginActivity", "Failed to subscribe to topic", task.getException());
+                   }
+                });
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -38,6 +51,18 @@ public class LoginActivity extends AppCompatActivity {
             joinOrCreateQuizRoom(studentName, roomId);
         });
 
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (task.isSuccessful()) {
+                            String token = task.getResult();
+                            Log.d("Main", "Token: " + token);
+                        } else {
+                            Log.e("Main", "Error getting FCM token: " + task.getException());
+                        }
+                    }
+                });
     }
 
     private void joinOrCreateQuizRoom(String studentName, String roomId) {
@@ -84,5 +109,9 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("MainActivity", "onNewIntent: " + intent.getAction());
+    }
 }

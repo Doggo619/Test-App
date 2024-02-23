@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import com.base.unscramblewords.databinding.ActivityQuizBinding;
 import com.base.unscramblewords.entity.quizEntity.Questions;
+import com.base.unscramblewords.pushNotification.MyFirebaseMessagingService;
+import com.base.unscramblewords.storage.QuestionStorage;
 import com.base.unscramblewords.viewmodel.WordsViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -43,7 +45,11 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
         startCountDownTimer();
 
         WordsViewModel viewModel = new ViewModelProvider(this).get(WordsViewModel.class);
-        viewModel.insertQuestions();
+//        viewModel.insertQuestions();
+
+        QuestionStorage questionStorage = QuestionStorage.getInstance();
+        List<Questions> questionsList = questionStorage.getQuestionsList();
+        viewModel.insertQuestions(questionsList);
         viewModel.getAllQuestions().observe(this, this::handleAllQuestions);
 
 //        String studentName = getIntent().getStringExtra("studentName");
@@ -59,10 +65,15 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
             Log.d("quiz Activity", "Time Taken   " + timeTaken);
             countDownTimer.cancel();
             saveResultsToDatabase(questionResults, timeTaken);
+            sendResultsToWhatsApp();
             Intent intent = new Intent(QuizActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         });
+
+    }
+
+    private void sendResultsToWhatsApp() {
 
     }
 
@@ -141,4 +152,5 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
     public void onClick(int questionId, Boolean isCorrect) {
         questionResults.put(questionId, isCorrect);
     }
+
 }

@@ -7,13 +7,10 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.base.unscramblewords.dao.QuestionsDao;
-import com.base.unscramblewords.dao.WordsDao;
-import com.base.unscramblewords.entity.WordsEntity;
 import com.base.unscramblewords.entity.quizEntity.Questions;
 
-@Database(entities = {WordsEntity.class, Questions.class}, version = 1)
+@Database(entities = {Questions.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
-    public abstract WordsDao wordsDao();
     public abstract QuestionsDao questionsDao();
     private static volatile AppDatabase instance;
 

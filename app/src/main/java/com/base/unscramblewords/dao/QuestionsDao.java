@@ -6,7 +6,6 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.base.unscramblewords.entity.WordsEntity;
 import com.base.unscramblewords.entity.quizEntity.Questions;
 
 import java.util.List;

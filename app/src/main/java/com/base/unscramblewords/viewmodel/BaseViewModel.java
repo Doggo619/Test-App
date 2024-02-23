@@ -8,7 +8,7 @@ public abstract class BaseViewModel extends ViewModel {
 
     public WordsRepository wordsRepository;
 
-    public BaseViewModel(WordsRepository skillChartRepository) {
-        this.wordsRepository = skillChartRepository;
+    public BaseViewModel(WordsRepository wordsRepository) {
+        this.wordsRepository = wordsRepository;
     }
 }
