@@ -7,11 +7,13 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.base.unscramblewords.databinding.ActivityQuizBinding;
 import com.base.unscramblewords.entity.quizEntity.Questions;
+import com.base.unscramblewords.mailer.EmailSender;
 import com.base.unscramblewords.pushNotification.MyFirebaseMessagingService;
 import com.base.unscramblewords.storage.QuestionStorage;
 import com.base.unscramblewords.viewmodel.WordsViewModel;
@@ -21,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -31,6 +35,8 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
     private String roomId;
     private String participantId;
     private Map<Integer, Boolean> questionResults;
+    private int correctAnswers;
+    private int totalNoOfQuestions;
     ViewPager2 viewPager2;
     private static final long TIMER_DURATION = 600000;
     private CountDownTimer countDownTimer;
@@ -65,7 +71,8 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
             Log.d("quiz Activity", "Time Taken   " + timeTaken);
             countDownTimer.cancel();
             saveResultsToDatabase(questionResults, timeTaken);
-            sendResultsToWhatsApp();
+            String emailId = "prasannakaran225@gmail.com";
+            sendResultsToMail(totalNoOfQuestions, correctAnswers, emailId);
             Intent intent = new Intent(QuizActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -73,9 +80,24 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
 
     }
 
-    private void sendResultsToWhatsApp() {
+    private void sendResultsToMail(int totalNoOfQuestions, int correctAnswers, String emailId) {
+        String htmlBody = "<html><head><style>body{font-family:Arial, sans-serif;padding:20px;}h1{color:#3498db;}p{color:#333;}</style></head><body>" +
+                "<h1>Your Quiz Results</h1>" +
+                "<p>Total Questions: " + totalNoOfQuestions + "</p>" +
+                "<p>Correct Answers: " + correctAnswers + "</p>" +
+                "</body></html>";
+
+        Handler handler = new Handler();
+        ExecutorService databaseWriteExecutor = Executors.newSingleThreadExecutor();
+        databaseWriteExecutor.execute(() -> {
+            EmailSender.sendEmail(emailId, "Your Quiz Activity", htmlBody);
+            handler.post(() -> {
+                Toast.makeText(this, "Result sent to Mail", Toast.LENGTH_SHORT).show();
+            });
+        });
 
     }
+
 
     private void startCountDownTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
@@ -149,8 +171,10 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
     }
 
     @Override
-    public void onClick(int questionId, Boolean isCorrect) {
+    public void onClick(int questionId, Boolean isCorrect, int correctAnswersCount, int totalQuestion) {
         questionResults.put(questionId, isCorrect);
+        correctAnswers = correctAnswersCount;
+        totalNoOfQuestions = totalQuestion;
     }
 
 }

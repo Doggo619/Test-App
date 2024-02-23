@@ -24,6 +24,8 @@ public class QuestionAdapter  extends ListAdapter<Questions, QuestionAdapter.Vie
     Context context;
     private final OnClickListener onClickListener;
     private final ViewPager2 viewPager;
+    int correctAnswers = 0;
+    int totalQuestions = 0;
 
 
     private static final DiffUtil.ItemCallback<Questions> QUESTIONS_ITEM_CALLBACK = new DiffUtil.ItemCallback<Questions>() {
@@ -58,6 +60,9 @@ public class QuestionAdapter  extends ListAdapter<Questions, QuestionAdapter.Vie
         Questions questions = getItem(position);
 
         if (questions != null) {
+
+            totalQuestions = getItemCount();
+
             holder.binding.tvQuestion.setText(questions.getQuestion());
             holder.binding.rbOption1.setText(questions.getOption1());
             holder.binding.rbOption2.setText(questions.getOption2());
@@ -68,8 +73,13 @@ public class QuestionAdapter  extends ListAdapter<Questions, QuestionAdapter.Vie
                 String givenAnswer = fetchSelectedAnswer(holder.binding.radioGroup);
                 questions.setGivenAnswer(givenAnswer);
 
+                boolean isCorrectAnswer = givenAnswer.equals(questions.getCorrectAnswer());
+                if (isCorrectAnswer) {
+                    correctAnswers++;
+                }
+
                 if (onClickListener != null) {
-                    onClickListener.onClick(questions.getQuestionId(), givenAnswer.equals(questions.getCorrectAnswer()));
+                    onClickListener.onClick(questions.getQuestionId(), givenAnswer.equals(questions.getCorrectAnswer()), correctAnswers, totalQuestions);
                 }
                 if (viewPager != null) {
                     viewPager.setCurrentItem(viewPager.getCurrentItem() + 1, true);
@@ -101,6 +111,6 @@ public class QuestionAdapter  extends ListAdapter<Questions, QuestionAdapter.Vie
         }
     }
     public interface OnClickListener {
-        void onClick(int questionId, Boolean isCorrect);
+        void onClick(int questionId, Boolean isCorrect, int correctAnswerCount, int totalQuestions);
     }
 }
