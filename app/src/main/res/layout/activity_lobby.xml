@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="WORD BUILDER"
+        app:title="QUIZ APP"
         app:titleCentered="true"
         android:background="#009688"
         app:titleTextColor="@color/white"
@@ -30,6 +30,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintVertical_bias="0.0" />
+
+<!--    <com.google.android.material.textview.MaterialTextView-->
+<!--        android:id="@+id/tvStudentNameJoined"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="studentName Joined"-->
+<!--        android:textStyle="bold"-->
+<!--        android:textColor="@color/green"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="80dp"-->
+<!--        android:layout_marginEnd="40dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/toolbar"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        />-->
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvTotalStudents"
@@ -58,10 +72,10 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTime"
+        android:id="@+id/tvTimer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="The test will start at 6:00 PM IST"
+        android:text="The test will start soon..."
         android:textSize="25sp"
         android:textStyle="bold"
         android:textAlignment="center"
@@ -84,6 +98,6 @@
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
         app:cornerRadius="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvTime"/>
+        app:layout_constraintTop_toBottomOf="@+id/tvTimer"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

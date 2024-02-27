@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ResultActivity">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="QUIZ APP"
+        app:titleCentered="true"
+        android:background="#009688"
+        app:titleTextColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/bgImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/bgimage"
+        android:scaleType="fitXY"
+        />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/border_background_green"
+        android:padding="10dp"
+        android:text="Result"
+        android:textAlignment="center"
+        android:textColor="#328F0A"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvResult"
+        >
+
+        <TableRow
+            android:padding="10dp"
+            android:background="@color/black">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvTotalQuestions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Total Questions"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                style="@style/TableRowTextView"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvTotalQuestionsNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:textColor="#00FF0E"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                style="@style/TableRowTextView"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center"
+                />
+        </TableRow>
+        <TableRow
+            android:padding="10dp"
+            android:background="#E8E8E8">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvTotalQuestionsAttempted"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Questions Attempted"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                style="@style/TableRowTextView"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvTotalQuestionsAttemptedNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="4"
+                android:textColor="#00C60B"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                style="@style/TableRowTextView"
+                android:layout_weight="4"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                />
+        </TableRow>
+        <TableRow
+            android:padding="10dp"
+            android:background="@color/black">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvCorrectAnswers"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Correct Answers"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                style="@style/TableRowTextView"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvCorrectAnswersNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textColor="#00FF0E"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                style="@style/TableRowTextView"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center"
+                />
+        </TableRow>
+
+        <TableRow
+            android:padding="10dp"
+            android:background="#E8E8E8">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvTimeTaken"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Time Taken"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                style="@style/TableRowTextView"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvTimeTakenNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="4 mins 25 secs"
+                android:textColor="#00C60B"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                style="@style/TableRowTextView"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center"
+                />
+        </TableRow>
+    </TableLayout>
+
+
+
+
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLeaderboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Leaderboard"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:backgroundTint="#009688"
+        android:layout_marginTop="20dp"
+        app:cornerRadius="5dp"
+        app:icon="@drawable/leaderboard"
+        app:iconSize="25dp"
+        app:iconTint="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Go to Home"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:backgroundTint="#009688"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        app:cornerRadius="5dp"
+        app:iconGravity="textStart"
+        app:icon="@drawable/home"
+        app:iconSize="25dp"
+        app:iconTint="@null"
+        app:layout_constraintTop_toBottomOf="@+id/btnLeaderboard"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

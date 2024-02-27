@@ -19,13 +19,13 @@ import com.base.unscramblewords.entity.quizEntity.Questions;
 import org.jetbrains.annotations.NotNull;
 
 
-public class QuestionAdapter  extends ListAdapter<Questions, QuestionAdapter.ViewHolder> {
+public class QuestionAdapter extends ListAdapter<Questions, QuestionAdapter.ViewHolder> {
 
     Context context;
     private final OnClickListener onClickListener;
     private final ViewPager2 viewPager;
-    int correctAnswers = 0;
     int totalQuestions = 0;
+    String isCorrect;
 
 
     private static final DiffUtil.ItemCallback<Questions> QUESTIONS_ITEM_CALLBACK = new DiffUtil.ItemCallback<Questions>() {
@@ -73,13 +73,17 @@ public class QuestionAdapter  extends ListAdapter<Questions, QuestionAdapter.Vie
                 String givenAnswer = fetchSelectedAnswer(holder.binding.radioGroup);
                 questions.setGivenAnswer(givenAnswer);
 
-                boolean isCorrectAnswer = givenAnswer.equals(questions.getCorrectAnswer());
-                if (isCorrectAnswer) {
-                    correctAnswers++;
+                if (givenAnswer.equals(questions.getCorrectAnswer())) {
+                    isCorrect = "Correct";
+                } else if (givenAnswer == null || givenAnswer.isEmpty()) {
+                    isCorrect = "UnAnswered";
+                }
+                else if (!givenAnswer.equals(questions.getCorrectAnswer())) {
+                    isCorrect = "InCorrect";
                 }
 
                 if (onClickListener != null) {
-                    onClickListener.onClick(questions.getQuestionId(), givenAnswer.equals(questions.getCorrectAnswer()), correctAnswers, totalQuestions);
+                    onClickListener.onClick(questions.getQuestionId(), isCorrect, totalQuestions);
                 }
                 if (viewPager != null) {
                     viewPager.setCurrentItem(viewPager.getCurrentItem() + 1, true);
@@ -87,7 +91,6 @@ public class QuestionAdapter  extends ListAdapter<Questions, QuestionAdapter.Vie
             });
         }
     }
-
 
 
     private String fetchSelectedAnswer(RadioGroup radioGroup) {
@@ -110,7 +113,8 @@ public class QuestionAdapter  extends ListAdapter<Questions, QuestionAdapter.Vie
             this.binding = binding;
         }
     }
+
     public interface OnClickListener {
-        void onClick(int questionId, Boolean isCorrect, int correctAnswerCount, int totalQuestions);
+        void onClick(int questionId, String isCorrect, int totalQuestions);
     }
 }

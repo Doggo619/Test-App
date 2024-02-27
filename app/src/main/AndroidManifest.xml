@@ -16,6 +16,9 @@
         android:theme="@style/Theme.UnscrambleWords"
         tools:targetApi="31">
         <activity
+            android:name=".ui.ResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.LobbyActivity"
             android:exported="false" />
         <activity
@@ -32,7 +35,7 @@
         </activity>
 
         <service
-            android:name="com.base.unscramblewords.pushNotification.MyFirebaseMessagingService"
+            android:name=".pushNotification.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

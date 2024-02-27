@@ -32,16 +32,12 @@ public class WordsRepository {
     }
 
 
-
-
-
-    public void insertQuestions(List<Questions> questions) {
+    public void insertQuestions(Questions questions) {
         databaseWriteExecutor.execute(() -> {
-            for (Questions question : questions) {
-                questionsDao.insert(question);
-            }
+            questionsDao.insert(questions);
         });
     }
+
     public LiveData<List<Questions>> getAllQuestions() {
         return questionsDao.getAllQuestions();
     }

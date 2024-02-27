@@ -14,11 +14,11 @@ import android.widget.Toast;
 import com.base.unscramblewords.databinding.ActivityQuizBinding;
 import com.base.unscramblewords.entity.quizEntity.Questions;
 import com.base.unscramblewords.mailer.EmailSender;
-import com.base.unscramblewords.pushNotification.MyFirebaseMessagingService;
 import com.base.unscramblewords.storage.QuestionStorage;
 import com.base.unscramblewords.viewmodel.WordsViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,9 +34,10 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
     ActivityQuizBinding binding;
     private String roomId;
     private String participantId;
-    private Map<Integer, Boolean> questionResults;
+    private Map<Integer, String> questionResults;
     private int correctAnswers;
     private int totalNoOfQuestions;
+    private int unAnsweredQuestions;
     ViewPager2 viewPager2;
     private static final long TIMER_DURATION = 600000;
     private CountDownTimer countDownTimer;
@@ -55,7 +56,7 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
 
         QuestionStorage questionStorage = QuestionStorage.getInstance();
         List<Questions> questionsList = questionStorage.getQuestionsList();
-        viewModel.insertQuestions(questionsList);
+        viewModel.insertQuestions();
         viewModel.getAllQuestions().observe(this, this::handleAllQuestions);
 
 //        String studentName = getIntent().getStringExtra("studentName");
@@ -71,9 +72,15 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
             Log.d("quiz Activity", "Time Taken   " + timeTaken);
             countDownTimer.cancel();
             saveResultsToDatabase(questionResults, timeTaken);
-            String emailId = "prasannakaran225@gmail.com";
+            String emailId = "deepakrichard67@gmail.com";
             sendResultsToMail(totalNoOfQuestions, correctAnswers, emailId);
-            Intent intent = new Intent(QuizActivity.this, LoginActivity.class);
+            long timeTakenInMilliSeconds = TIMER_DURATION - convertTimeToSeconds(timeTaken);
+            Intent intent = new Intent(QuizActivity.this, ResultActivity.class);
+            intent.putExtra("totalNoOfQuestions", totalNoOfQuestions);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("questionResults", (Serializable) questionResults);
+            intent.putExtra("questionResultsBundle", bundle);
+            intent.putExtra("timeTaken", timeTakenInMilliSeconds);
             startActivity(intent);
             finish();
         });
@@ -81,11 +88,39 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
     }
 
     private void sendResultsToMail(int totalNoOfQuestions, int correctAnswers, String emailId) {
-        String htmlBody = "<html><head><style>body{font-family:Arial, sans-serif;padding:20px;}h1{color:#3498db;}p{color:#333;}</style></head><body>" +
+        String htmlBody = "<html>" +
+                "<head>" +
+                "<style>" +
+                "body {" +
+                "   font-family: Arial, sans-serif;" +
+                "   background-color: #f4f4f4;" +
+                "   padding: 20px;" +
+                "}" +
+                "h1 {" +
+                "   color: #3498db;" +
+                "   text-align: center;" +
+                "}" +
+                ".result-container {" +
+                "   border: 1px solid #ccc;" +
+                "   padding: 20px;" +
+                "   background-color: #fff;" +
+                "   border-radius: 5px;" +
+                "   margin-top: 20px;" +
+                "}" +
+                "p {" +
+                "   color: #333;" +
+                "   margin-bottom: 10px;" +
+                "}" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
                 "<h1>Your Quiz Results</h1>" +
+                "<div class='result-container'>" +
                 "<p>Total Questions: " + totalNoOfQuestions + "</p>" +
                 "<p>Correct Answers: " + correctAnswers + "</p>" +
-                "</body></html>";
+                "</div>" +
+                "</body>" +
+                "</html>";
 
         Handler handler = new Handler();
         ExecutorService databaseWriteExecutor = Executors.newSingleThreadExecutor();
@@ -111,8 +146,13 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
             public void onFinish() {
                 String timeTaken = binding.tvTimer.getText().toString();
                 saveResultsToDatabase(questionResults, timeTaken);
-                Toast.makeText(QuizActivity.this, "Time's up! Test submitted successfully", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(QuizActivity.this, LoginActivity.class);
+                long timeTakenInMilliSeconds = TIMER_DURATION - convertTimeToSeconds(timeTaken);
+                Intent intent = new Intent(QuizActivity.this, ResultActivity.class);
+                intent.putExtra("totalNoOfQuestions", totalNoOfQuestions);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("questionResults", (Serializable) questionResults);
+                intent.putExtra("questionResultsBundle", bundle);
+                intent.putExtra("timeTaken", timeTakenInMilliSeconds);
                 startActivity(intent);
                 finish();
             }
@@ -126,13 +166,13 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
         binding.tvTimer.setText(timerText);
     }
 
-    private void saveResultsToDatabase(Map<Integer, Boolean> questionResults, String timeTaken) {
+    private void saveResultsToDatabase(Map<Integer, String> questionResults, String timeTaken) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String participantPath = "quiz/" + roomId + "/participants/" + participantId;
 
 
-        Map<String, Boolean> convertedResults = new HashMap<>();
-        for (Map.Entry<Integer, Boolean> entry : questionResults.entrySet()) {
+        Map<String, String> convertedResults = new HashMap<>();
+        for (Map.Entry<Integer, String> entry : questionResults.entrySet()) {
             convertedResults.put(String.valueOf(entry.getKey()), entry.getValue());
         }
 
@@ -171,9 +211,8 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
     }
 
     @Override
-    public void onClick(int questionId, Boolean isCorrect, int correctAnswersCount, int totalQuestion) {
+    public void onClick(int questionId, String isCorrect, int totalQuestion) {
         questionResults.put(questionId, isCorrect);
-        correctAnswers = correctAnswersCount;
         totalNoOfQuestions = totalQuestion;
     }
 

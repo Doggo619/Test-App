@@ -42,11 +42,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 List<Questions> questionsList = new ArrayList<>();
                 for (int i = 0; i < notificationsArray.length(); i++) {
                     JSONObject notificationObject = notificationsArray.getJSONObject(i);
-                    Questions question = processQuestionNotification(notificationObject);
-                    questionsList.add(question);
+//                    Questions question = processQuestionNotification(notificationObject);
+//                    questionsList.add(question);
 
                 }
-                QuestionStorage.getInstance().setQuestionsList(questionsList);
+//                QuestionStorage.getInstance().setQuestionsList(questionsList);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
