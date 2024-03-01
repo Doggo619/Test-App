@@ -72,7 +72,7 @@ public class WordsViewModel extends BaseViewModel {
                 "No",
                 "Maybe",
                 "I don't care",
-                "yes"
+                "Yes"
         );
         wordsRepository.insertQuestions(question5);
     }

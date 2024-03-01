@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -19,7 +20,9 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +32,7 @@ public class LobbyActivity extends AppCompatActivity {
     private static final long TIMER_DURATION = 10000;
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis = TIMER_DURATION;
+    private List<String> joinedParticipants = new ArrayList<>();
 
 
     @Override
@@ -68,6 +72,10 @@ public class LobbyActivity extends AppCompatActivity {
                             String newStudentName = (String) dc.getDocument().get("name");
                             handleNewStudentJoined(newStudentName);
                             break;
+//                        case MODIFIED:
+//                            String newStudentName = (String) dc.getDocument().get("name");
+//                            handleNewStudentJoined(newStudentName);
+//                            break;
                     }
                 }
 
@@ -95,7 +103,26 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void handleNewStudentJoined(String newStudentName) {
+
+        joinedParticipants.add(newStudentName);
+
         Toast.makeText(this, newStudentName + " has joined", Toast.LENGTH_SHORT).show();
+
+        final int[] currentIndex = {0};
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (currentIndex[0] < joinedParticipants.size()) {
+                    String currentName = joinedParticipants.get(currentIndex[0]);
+                    binding.tvStudentNameJoined.setText(currentName + " has joined");
+                    currentIndex[0]++;
+                    handler.postDelayed(this, 1000);
+                }
+            }
+        };
+        handler.post(runnable);
+
     }
 
 
