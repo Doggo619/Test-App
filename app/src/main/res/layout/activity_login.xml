@@ -30,26 +30,13 @@
         android:scaleType="fitXY"
         />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvCreate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter Quiz"
-        android:layout_marginTop="200dp"
-        android:layout_marginStart="20dp"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:textColor="#328F0A"
-        android:padding="10dp"
-        android:background="@drawable/border_background_green"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tvPlayerName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="220dp"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
         android:hint="Enter Name"
@@ -58,7 +45,7 @@
         app:boxStrokeColor="#0625C3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCreate">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPlayerName"
@@ -74,7 +61,7 @@
         android:id="@+id/btnQuiz"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test"
+        android:text="Join Now"
         android:textStyle="bold"
         android:textSize="20sp"
         android:backgroundTint="#009688"

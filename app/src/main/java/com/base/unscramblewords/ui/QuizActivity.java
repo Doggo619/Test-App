@@ -33,7 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class QuizActivity extends AppCompatActivity implements QuestionAdapter.OnClickListener {
     ActivityQuizBinding binding;
     private String roomId;
-    private String participantId;
+    private long participantId;
     private Map<Integer, String> questionResults;
     private int correctAnswers;
     private int totalNoOfQuestions;
@@ -61,7 +61,7 @@ public class QuizActivity extends AppCompatActivity implements QuestionAdapter.O
 
 //        String studentName = getIntent().getStringExtra("studentName");
         roomId = getIntent().getStringExtra("roomId");
-        participantId = getIntent().getStringExtra("participantId");
+        participantId = getIntent().getLongExtra("participantId", 0);
 //        long participantsCount = getIntent().getLongExtra("participantsCount", 0);
 
         viewPager2 = binding.viewPager;

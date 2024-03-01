@@ -6,5 +6,5 @@
     <string name="action_make_date_time_proper">MAKE IT PROPER</string>
 
 
-    <string name="students_joined">%s Students Joined</string>
+    <string name="students_joined">Total no. of Participants : %s</string>
 </resources>

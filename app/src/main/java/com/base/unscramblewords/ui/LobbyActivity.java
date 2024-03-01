@@ -3,10 +3,12 @@ package com.base.unscramblewords.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
@@ -46,15 +48,15 @@ public class LobbyActivity extends AppCompatActivity {
 
 
         String roomId = getIntent().getStringExtra("roomId");
-        String participantId = getIntent().getStringExtra("participantId");
+        long participantId = getIntent().getLongExtra("participantId",0);
         String studentName = getIntent().getStringExtra("studentName");
         long participantsCount = getIntent().getLongExtra("participantsCount", 0);
 
         CollectionReference quizRef = db.collection("quiz");
 
 
-        assert participantId != null;
-        quizRef.document(roomId).collection("participants").document(participantId).set(createParticipantMap(studentName));
+        assert participantId != 0;
+        quizRef.document(roomId).collection("participants").document(String.valueOf(participantId)).set(createParticipantMap(studentName));
 
         quizRef.document(roomId).collection("participants").addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (e != null) {
@@ -64,13 +66,16 @@ public class LobbyActivity extends AppCompatActivity {
 
             if (queryDocumentSnapshots != null) {
                 String totalParticipants = String.valueOf(queryDocumentSnapshots.size());
-                binding.tvTotalStudents.setText(getString(R.string.students_joined, totalParticipants));
+                binding.tvTotalParticipants.setText(getString(R.string.students_joined, totalParticipants));
 
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                     switch (dc.getType()) {
                         case ADDED:
                             String newStudentName = (String) dc.getDocument().get("name");
-                            handleNewStudentJoined(newStudentName);
+                            long newParticipantId = Long.parseLong(dc.getDocument().getId());
+                            if (newParticipantId > participantId) {
+                                handleNewStudentJoined(newStudentName);
+                            }
                             break;
 //                        case MODIFIED:
 //                            String newStudentName = (String) dc.getDocument().get("name");
@@ -90,17 +95,15 @@ public class LobbyActivity extends AppCompatActivity {
 
             if (documentSnapshot != null) {
                 Boolean active = documentSnapshot.getBoolean("active");
-                binding.btnStart.setOnClickListener(v -> {
                     if (Boolean.TRUE.equals(active)) {
-                        startCountDownTimer(studentName, roomId, participantId, participantsCount);
-                    } else {
-                        Toast.makeText(LobbyActivity.this, "Please wait, Test will start soon", Toast.LENGTH_SHORT).show();
+                        startCountDownTimer(studentName, roomId, participantId, participantsCount, binding);
                     }
-                });
+
             }
         });
 
     }
+
 
     private void handleNewStudentJoined(String newStudentName) {
 
@@ -126,7 +129,7 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
 
-    private void startCountDownTimer(String studentName, String roomId, String participantId, long participantsCount) {
+    private void startCountDownTimer(String studentName, String roomId, long participantId, long participantsCount, ActivityLobbyBinding binding) {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -136,14 +139,22 @@ public class LobbyActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                Intent intent = new Intent(LobbyActivity.this, QuizActivity.class);
-                intent.putExtra("studentName", studentName);
-                intent.putExtra("roomId", roomId);
-                intent.putExtra("participantId", participantId);
-                intent.putExtra("participantsCount", participantsCount);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                finish();
+                binding.btnStart.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.btnActive)));
+                binding.tvTimer.setVisibility(View.GONE);
+                binding.tvHangOn.setText("You can start now");
+                binding.btnStart.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(LobbyActivity.this, QuizActivity.class);
+                        intent.putExtra("studentName", studentName);
+                        intent.putExtra("roomId", roomId);
+                        intent.putExtra("participantId", participantId);
+                        intent.putExtra("participantsCount", participantsCount);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        finish();
+                    }
+                });
             }
         }.start();
     }

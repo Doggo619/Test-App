@@ -92,13 +92,13 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void joinRoomAsStudent(String studentName, String roomId, DocumentReference roomDocumentRef, long participantsCount) {
-        String participantId = String.valueOf(participantsCount +1);
-        roomDocumentRef.collection("participants").document(participantId).set(new Students(studentName));
+        long participantId = participantsCount + 1;
+        roomDocumentRef.collection("participants").document(String.valueOf(participantId)).set(new Students(studentName));
         roomDocumentRef.update("totalParticipants", participantsCount + 1);
         startQuizActivity(studentName, roomId, participantId, participantsCount + 1);
     }
 
-    private void startQuizActivity(String studentName, String roomId, String participantId, long participantsCount) {
+    private void startQuizActivity(String studentName, String roomId, long participantId, long participantsCount) {
         Intent intent = new Intent(LoginActivity.this, LobbyActivity.class);
         intent.putExtra("studentName", studentName);
         intent.putExtra("roomId", roomId);
